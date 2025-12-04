@@ -5,7 +5,7 @@ use Runtime\Map;
 use Runtime\Vector;
 use Runtime\Entity\Provider;
 
-include dirname(getenv("COMPOSER_RUNTIME_BIN_DIR")) . '/autoload.php';
+include $_composer_autoload_path ?? dirname(getenv("COMPOSER_RUNTIME_BIN_DIR")) . '/autoload.php';
 $context = Runtime\rtl::createContext(
     new Map([
         "base_path" => getcwd(),
