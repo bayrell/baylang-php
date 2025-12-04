@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+use Runtime\Map;
+use Runtime\Vector;
+use Runtime\Entity\Provider;
+
+include dirname(getenv("COMPOSER_RUNTIME_BIN_DIR")) . '/autoload.php';
+$context = Runtime\rtl::createContext(
+    new Map([
+        "base_path" => getcwd(),
+        "cli_args" => Vector::create($argv),
+        "providers" => new Vector(
+            new Provider("app", "BayLang.Compiler.ConsoleApp"),
+        ),
+        "modules" => new Vector("BayLang.Compiler")
+    ]),
+);
+$context->start();
+$code = $context->provider("app")->main();
+exit($code);
