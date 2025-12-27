@@ -217,7 +217,7 @@ class TranslatorES6Html extends \Runtime\BaseObject
 			$is_slot = $op_code->content->items->filter(function ($item){ return $item instanceof \BayLang\OpCodes\OpHtmlSlot; })->count() == $op_code->content->count();
 			if (\BayLang\LangBay\ParserBayHtml::isComponent($op_code->tag_name) && !$is_slot)
 			{
-				$op_code_item = new \BayLang\OpCodes\OpDeclareFunction(new \Runtime\Map([
+				$op_code_item = new \BayLang\OpCodes\OpHtmlSlot(new \Runtime\Map([
 					"is_html" => true,
 					"content" => $op_code->content,
 				]));

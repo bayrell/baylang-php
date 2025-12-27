@@ -174,9 +174,8 @@ class TranslatorES6Expression extends \Runtime\BaseObject
 	function OpCollection($op_code, $result)
 	{
 		$is_multiline = $this->translator->allow_multiline && $op_code->isMultiLine();
-		$result->push("new ");
-		$result->push($this->translator->getUseModule("Vector"));
-		$result->push("(");
+		$result->push($this->translator->getUseModule("Vector") . ".create");
+		$result->push("([");
 		if ($is_multiline)
 		{
 			$this->translator->levelInc();
@@ -223,7 +222,7 @@ class TranslatorES6Expression extends \Runtime\BaseObject
 			$this->translator->levelDec();
 			$result->push($this->translator->newLine());
 		}
-		$result->push(")");
+		$result->push("])");
 	}
 	
 	
@@ -307,7 +306,15 @@ class TranslatorES6Expression extends \Runtime\BaseObject
 			$item_attr = $attrs->get($i);
 			if ($item_attr->kind == \BayLang\OpCodes\OpAttr::KIND_ATTR || $item_attr->kind == \BayLang\OpCodes\OpAttr::KIND_STATIC)
 			{
-				$result->push(".");
+				$prev_attr = $i > 0 ? $attrs->get($i - 1) : $op_code_first;
+				if ($prev_attr instanceof \BayLang\OpCodes\OpIdentifier && $item_attr->kind == \BayLang\OpCodes\OpAttr::KIND_STATIC)
+				{
+					$result->push(".constructor.");
+				}
+				else
+				{
+					$result->push(".");
+				}
 				$result->push($item_attr->next->value);
 			}
 			else if ($item_attr->kind == \BayLang\OpCodes\OpAttr::KIND_DYNAMIC)

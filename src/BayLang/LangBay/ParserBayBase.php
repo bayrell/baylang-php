@@ -508,15 +508,18 @@ class ParserBayBase extends \Runtime\BaseObject
 			{
 				if ($next_token == "::" && $item instanceof \BayLang\OpCodes\OpIdentifier)
 				{
-					$item = new \BayLang\OpCodes\OpTypeIdentifier(new \Runtime\Map([
-						"entity_name" => new \BayLang\OpCodes\OpEntityName(new \Runtime\Map([
-							"items" => new \Runtime\Vector($item),
+					if (!$this->parser->vars->has($item->value))
+					{
+						$item = new \BayLang\OpCodes\OpTypeIdentifier(new \Runtime\Map([
+							"entity_name" => new \BayLang\OpCodes\OpEntityName(new \Runtime\Map([
+								"items" => new \Runtime\Vector($item),
+								"caret_start" => $item->caret_start,
+								"caret_end" => $item->caret_end,
+							])),
 							"caret_start" => $item->caret_start,
 							"caret_end" => $item->caret_end,
-						])),
-						"caret_start" => $item->caret_start,
-						"caret_end" => $item->caret_end,
-					]));
+						]));
+					}
 				}
 				$reader->matchToken($next_token);
 				$op_code_item = $this->readIdentifier($reader);

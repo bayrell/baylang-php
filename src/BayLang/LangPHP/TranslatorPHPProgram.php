@@ -335,7 +335,7 @@ class TranslatorPHPProgram extends \Runtime\BaseObject
 	/**
 	 * OpDeclareFunction
 	 */
-	function OpDeclareFunction($op_code, $result)
+	function OpDeclareFunction($op_code, $result, $use_name = true)
 	{
 		/*if (not (op_code.pattern instanceof OpTypeIdentifier)) return;*/
 		/* Setup current function */
@@ -359,7 +359,7 @@ class TranslatorPHPProgram extends \Runtime\BaseObject
 		/* Function name */
 		$result->push("function ");
 		if ($op_code->name == "constructor") $result->push("__construct");
-		else $result->push($op_code->name);
+		else if ($use_name) $result->push($op_code->name);
 		/* Arguments */
 		$result->push("(");
 		$this->OpDeclareFunctionArgs($op_code, $result);
@@ -656,12 +656,12 @@ class TranslatorPHPProgram extends \Runtime\BaseObject
 				$result->push($this->translator->newLine());
 				$result->push("{");
 				$this->translator->levelInc();
-				$result->push($this->translator->newLine());
 				for ($i = 0; $i < $methods->count(); $i++)
 				{
 					$op_code_item = $methods->get($i);
 					$method_name = $this->translator->toString($op_code_item->name);
-					$result->push("if (\$field_nane == " . $method_name . ") ");
+					$result->push($this->translator->newLine());
+					$result->push("if (\$field_name == " . $method_name . ") ");
 					$this->OpAnnotation($op_code_item->annotations, $result);
 				}
 				$result->push($this->translator->newLine());

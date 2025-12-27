@@ -95,6 +95,12 @@ class Watch extends \Runtime\Console\BaseCommand
 	function run()
 	{
 		$base_path = \Runtime\rtl::getContext()->base_path;
+		exec("which inotifywait", $output, $return_var);
+		if ($return_var !== 0)
+		{
+			throw new \Exception("inotifywait not found. Please install inotify-tools package.");
+		}
+		
 		$command = "inotifywait -r -m -e modify,create,delete,move '$base_path' 2>&1";
 		
 		$handle = popen($command, 'r');
