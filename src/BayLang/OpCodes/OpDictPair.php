@@ -18,13 +18,15 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpString;
 
 
 class OpDictPair extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $key;
 	var $expression;
 	var $condition;
@@ -33,12 +35,12 @@ class OpDictPair extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "condition", $data);
-		$serializer->process($this, "key", $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("key", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpString"])));
+		$rules->addType("expression", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("condition", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	
@@ -46,6 +48,7 @@ class OpDictPair extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_dict_pair";
 		$this->key = null;
 		$this->expression = null;
 		$this->condition = null;

@@ -18,9 +18,11 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAnnotation;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpEntityName;
 use BayLang\OpCodes\OpFlags;
@@ -36,11 +38,12 @@ class OpAssignValue extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "value", $data);
-		$serializer->process($this, "expression", $data);
+		parent::serialize($rules);
+		$rules->addType("op", new \Runtime\Serializer\StringType());
+		$rules->addType("value", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("expression", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

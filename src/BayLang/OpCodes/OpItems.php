@@ -19,6 +19,8 @@
 namespace BayLang\OpCodes;
 
 use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 
 
@@ -31,10 +33,10 @@ class OpItems extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "items", $data);
+		parent::serialize($rules);
+		$rules->addType("items", new \Runtime\Serializer\VectorType($rules->params->get("item")));
 	}
 	
 	

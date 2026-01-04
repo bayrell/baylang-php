@@ -18,18 +18,36 @@
  */
 namespace BayLang\OpCodes;
 
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
+
 
 class OpHtmlCSS extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $selector;
 	var $items;
+	
+	
+	/**
+	 * Serialize object
+	 */
+	static function serialize($rules)
+	{
+		parent::serialize($rules);
+		$rules->addType("selector", new \Runtime\Serializer\StringType());
+		$rules->addType("items", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
+	}
 	
 	
 	/* ========= Class init functions ========= */
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_html_css";
 		$this->selector = "";
 		$this->items = new \Runtime\Vector();
 	}

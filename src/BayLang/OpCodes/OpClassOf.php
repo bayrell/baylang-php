@@ -18,7 +18,7 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpEntityName;
 
@@ -32,10 +32,10 @@ class OpClassOf extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "entity_name", $data);
+		parent::serialize($rules);
+		$rules->addType("entity_name", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpEntityName"])));
 	}
 	
 	

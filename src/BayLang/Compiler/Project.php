@@ -22,7 +22,7 @@ use Runtime\fs;
 use Runtime\lib;
 use Runtime\BaseObject;
 use Runtime\SerializeInterface;
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\Compiler\Module;
 
 
@@ -31,6 +31,15 @@ class Project extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	var $path;
 	var $info;
 	var $modules;
+	
+	
+	/**
+	 * Process project cache
+	 */
+	static function serialize($rules)
+	{
+		parent::serialize($rules);
+	}
 	
 	
 	/**
@@ -77,17 +86,8 @@ class Project extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	function save()
 	{
 		$project_json_path = \Runtime\fs::join(new \Runtime\Vector($this->path, "project.json"));
-		$content = \Runtime\rtl::json_encode($this->info, \Runtime\rtl::JSON_PRETTY);
+		$content = \Runtime\rtl::jsonEncode($this->info, \Runtime\rtl::JSON_PRETTY);
 		\Runtime\fs::saveFile($project_json_path, $content);
-	}
-	
-	
-	/**
-	 * Process project cache
-	 */
-	function serialize($serializer, $data)
-	{
-		$serializer->processItems($this, "modules", $data, function ($serializer, $module){ return new \BayLang\Compiler\Module($this, $module->get("path")); });
 	}
 	
 	
@@ -156,6 +156,21 @@ class Project extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	function setType($project_type)
 	{
 		$this->info->set("type", $project_type);
+	}
+	
+	
+	/**
+	 * Returns version
+	 */
+	function getVersion(){ return $this->exists() ? $this->info->get("version") : ""; }
+	
+	
+	/**
+	 * Set version
+	 */
+	function setVersion($version)
+	{
+		$this->info->set("version", $version);
 	}
 	
 	

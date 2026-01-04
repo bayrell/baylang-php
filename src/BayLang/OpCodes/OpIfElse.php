@@ -18,12 +18,14 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use Runtime\OpCodes\OpCodeType;
 
 
 class OpIfElse extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $condition;
 	var $content;
 	
@@ -31,11 +33,11 @@ class OpIfElse extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "condition", $data);
-		$serializer->process($this, "content", $data);
+		parent::serialize($rules);
+		$rules->addType("condition", new \Runtime\OpCodes\OpCodeType());
+		$rules->addType("content", new \Runtime\OpCodes\OpCodeType());
 	}
 	
 	
@@ -43,6 +45,7 @@ class OpIfElse extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_if_else";
 		$this->condition = null;
 		$this->content = null;
 	}

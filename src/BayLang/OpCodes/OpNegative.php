@@ -18,8 +18,9 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpNegative extends \BayLang\OpCodes\BaseOpCode
@@ -31,10 +32,10 @@ class OpNegative extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("value", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

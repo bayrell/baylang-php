@@ -584,53 +584,76 @@ class Html
 	}
 	static function getMethodInfoByName($field_name)
 	{
-		if ($field_nane == "test1") return new \Runtime\Vector(
+		if ($field_name == "test1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test2") return new \Runtime\Vector(
+		);
+		if ($field_name == "test2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test3") return new \Runtime\Vector(
+		);
+		if ($field_name == "test3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test4") return new \Runtime\Vector(
+		);
+		if ($field_name == "test4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testTemplate1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testTemplate1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testTemplate2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testTemplate2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testTemplate3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testTemplate3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComponent1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComponent1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComponent2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComponent2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComponent3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComponent3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComponent4") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComponent4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComponent5") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComponent5") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testContent1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testContent1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testContent2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testContent2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testContent3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testContent3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testClick") return new \Runtime\Vector(
+		);
+		if ($field_name == "testClick") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testScript1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testScript1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testSlot1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testSlot1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testSlot2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testSlot2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testStyle1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testStyle1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testStyle2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testStyle2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testStyle3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testStyle3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testStyle4") return new \Runtime\Vector(
+		);
+		if ($field_name == "testStyle4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testStyle5") return new \Runtime\Vector(
+		);
+		if ($field_name == "testStyle5") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
 		);
 		return null;

@@ -18,8 +18,11 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpPipe extends \BayLang\OpCodes\BaseOpCode
@@ -39,14 +42,14 @@ class OpPipe extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "is_async", $data);
-		$serializer->process($this, "is_monad", $data);
-		$serializer->process($this, "kind", $data);
-		$serializer->process($this, "obj", $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("is_async", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_monad", new \Runtime\Serializer\BooleanType());
+		$rules->addType("kind", new \Runtime\Serializer\StringType());
+		$rules->addType("obj", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("value", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

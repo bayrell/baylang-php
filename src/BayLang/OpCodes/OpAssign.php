@@ -18,7 +18,8 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAnnotation;
 use BayLang\OpCodes\OpAssignValue;
@@ -33,6 +34,7 @@ class OpAssign extends \BayLang\OpCodes\BaseOpCode
 	const KIND_DECLARE = "declare";
 	const KIND_STRUCT = "struct";
 	
+	var $op;
 	var $flags;
 	var $pattern;
 	var $items;
@@ -41,12 +43,14 @@ class OpAssign extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "flags", $data);
-		$serializer->process($this, "pattern", $data);
-		$serializer->process($this, "items", $data);
+		parent::serialize($rules);
+		$rules->addType("flags", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpFlags"])));
+		$rules->addType("pattern", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpTypeIdentifier"])));
+		$rules->addType("items", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpAssignValue",
+		]))));
 	}
 	
 	
@@ -60,6 +64,7 @@ class OpAssign extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_assign";
 		$this->flags = null;
 		$this->pattern = null;
 		$this->items = null;

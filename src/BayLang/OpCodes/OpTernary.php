@@ -18,8 +18,9 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpTernary extends \BayLang\OpCodes\BaseOpCode
@@ -33,12 +34,12 @@ class OpTernary extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "condition", $data);
-		$serializer->process($this, "if_false", $data);
-		$serializer->process($this, "if_true", $data);
+		parent::serialize($rules);
+		$rules->addType("condition", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("if_false", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("if_true", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

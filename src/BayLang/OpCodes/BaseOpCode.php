@@ -22,6 +22,7 @@ use Runtime\BaseObject;
 use Runtime\BaseStruct;
 use Runtime\SerializeInterface;
 use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\Caret;
 
 
@@ -33,22 +34,29 @@ class BaseOpCode extends \Runtime\BaseObject implements \Runtime\SerializeInterf
 	
 	
 	/**
+	 * Serialize object
+	 */
+	static function serialize($rules)
+	{
+		parent::serialize($rules);
+		$rules->addType("caret_start", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.Caret"])));
+		$rules->addType("caret_end", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.Caret"])));
+	}
+	
+	
+	/**
+	 * Assign rules
+	 */
+	function assignRules($rules){}
+	
+	
+	/**
 	 * Constructor
 	 */
 	function __construct($params = null)
 	{
 		parent::__construct();
 		$this->_assign_values($params);
-	}
-	
-	
-	/**
-	 * Serialize object
-	 */
-	function serialize($serializer, $data)
-	{
-		$serializer->process($this, "caret_start", $data);
-		$serializer->process($this, "caret_end", $data);
 	}
 	
 	

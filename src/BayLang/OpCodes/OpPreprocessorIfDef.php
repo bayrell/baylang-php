@@ -18,8 +18,9 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpPreprocessorIfDef extends \BayLang\OpCodes\BaseOpCode
@@ -41,11 +42,11 @@ class OpPreprocessorIfDef extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "condition", $data);
-		$serializer->process($this, "items", $data);
+		parent::serialize($rules);
+		$rules->addType("condition", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("items", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

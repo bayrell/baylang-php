@@ -19,13 +19,10 @@
 namespace BayLang\OpCodes;
 
 use Runtime\Reference;
-use Runtime\Serializer;
-use BayLang\Caret;
-use BayLang\TokenReader;
-use BayLang\Exceptions\ParserUnknownError;
-use BayLang\LangBay\ParserBay;
-use BayLang\LangBay\ParserBayHtml;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpHtmlStyle extends \BayLang\OpCodes\BaseOpCode
@@ -38,12 +35,11 @@ class OpHtmlStyle extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "content", $data);
-		$serializer->process($this, "is_global", $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("content", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("is_global", new \Runtime\Serializer\BooleanType());
 	}
 	
 	

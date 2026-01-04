@@ -18,10 +18,14 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAnnotation;
 use BayLang\OpCodes\OpAssign;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpDeclareFunction;
 use BayLang\OpCodes\OpFlags;
@@ -56,27 +60,40 @@ class OpDeclareClass extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "annotations", $data);
-		$serializer->process($this, "class_extends", $data);
-		$serializer->process($this, "class_implements", $data);
-		$serializer->process($this, "comments", $data);
-		$serializer->process($this, "extend_name", $data);
-		$serializer->process($this, "flags", $data);
-		$serializer->process($this, "fn_create", $data);
-		$serializer->process($this, "fn_destroy", $data);
-		$serializer->process($this, "functions", $data);
-		$serializer->process($this, "is_abstract", $data);
-		$serializer->process($this, "is_component", $data);
-		$serializer->process($this, "is_declare", $data);
-		$serializer->process($this, "is_model", $data);
-		$serializer->process($this, "items", $data);
-		$serializer->process($this, "kind", $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "template", $data);
-		$serializer->process($this, "vars", $data);
+		parent::serialize($rules);
+		$rules->addType("annotations", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpAnnotation",
+		]))));
+		$rules->addType("class_extends", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
+		])));
+		$rules->addType("class_implements", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
+		]))));
+		$rules->addType("comments", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpComment",
+		])));
+		$rules->addType("flags", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpFlags",
+		])));
+		$rules->addType("fn_create", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpDeclareFunction",
+		])));
+		$rules->addType("fn_destroy", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpDeclareFunction",
+		])));
+		$rules->addType("is_abstract", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_component", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_declare", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_model", new \Runtime\Serializer\BooleanType());
+		$rules->addType("content", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("kind", new \Runtime\Serializer\StringType());
+		$rules->addType("name", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
+		])));
+		$rules->addType("template", new \Runtime\Serializer\VectorType());
 	}
 	
 	

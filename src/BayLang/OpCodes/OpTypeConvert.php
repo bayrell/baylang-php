@@ -18,8 +18,9 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpTypeIdentifier;
 
 
@@ -33,11 +34,11 @@ class OpTypeConvert extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "pattern", $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("pattern", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpTypeIdentifier"])));
+		$rules->addType("value", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

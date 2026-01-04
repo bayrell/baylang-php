@@ -18,7 +18,8 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\IntergerType;
 use BayLang\OpCodes\BaseOpCode;
 
 
@@ -31,10 +32,10 @@ class OpCurryArg extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "pos", $data);
+		parent::serialize($rules);
+		$rules->addType("pos", new \Runtime\Serializer\IntergerType());
 	}
 	
 	
@@ -42,7 +43,7 @@ class OpCurryArg extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
-		$this->op = "op_curry";
+		$this->op = "op_curry_arg";
 		$this->pos = 0;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpCurryArg"; }

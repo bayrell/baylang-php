@@ -20,21 +20,23 @@ namespace BayLang\OpCodes;
 
 use Runtime\BaseObject;
 use Runtime\Serializer;
-use Runtime\SerializeInterface;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\MapType;
 use BayLang\OpCodes\BaseOpCode;
 
 
-class OpFlags extends \BayLang\OpCodes\BaseOpCode implements \Runtime\SerializeInterface
+class OpFlags extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $items;
 	
 	
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($serializer)
 	{
-		$serializer->process($this, "items", $data);
+		$serializer->addType("items", new \Runtime\Serializer\MapType(new \Runtime\Serializer\BooleanType()));
 	}
 	
 	
@@ -93,6 +95,7 @@ class OpFlags extends \BayLang\OpCodes\BaseOpCode implements \Runtime\SerializeI
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_flags";
 		$this->items = new \Runtime\Vector();
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpFlags"; }

@@ -22,8 +22,13 @@ use Runtime\fs;
 use Runtime\re;
 use Runtime\lib;
 use Runtime\BaseObject;
+use Runtime\SerializeObject;
 use Runtime\SerializeInterface;
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\MapType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use BayLang\Compiler\Project;
 use BayLang\LangBay\ParserBay;
 use BayLang\LangES6\TranslatorES6;
@@ -49,6 +54,25 @@ class Module extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	var $routes;
 	var $groups;
 	var $exclude;
+	
+	
+	/**
+	 * Process project cache
+	 */
+	static function serialize($rules)
+	{
+		parent::serialize($rules);
+		$rules->addType("is_exists", new \Runtime\Serializer\BooleanType());
+		$rules->addType("assets", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\StringType()));
+		$rules->addType("groups", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\StringType()));
+		$rules->addType("name", new \Runtime\Serializer\StringType());
+		$rules->addType("path", new \Runtime\Serializer\StringType());
+		$rules->addType("routes", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\MapType()));
+		$rules->addType("dest_path", new \Runtime\Serializer\MapType(new \Runtime\Serializer\StringType()));
+		$rules->addType("src_path", new \Runtime\Serializer\StringType());
+		$rules->addType("required_modules", new \Runtime\Serializer\VectorType());
+		$rules->addType("submodules", new \Runtime\Serializer\MapType());
+	}
 	
 	
 	/**
@@ -87,24 +111,6 @@ class Module extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 		$this->required_modules = $module_info->get("require");
 		$this->submodules = $module_info->get("modules");
 		$this->exclude = $module_info->get("exclude");
-	}
-	
-	
-	/**
-	 * Process project cache
-	 */
-	function serialize($serializer, $data)
-	{
-		$serializer->process($this, "is_exists", $data);
-		$serializer->process($this, "assets", $data);
-		$serializer->process($this, "groups", $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "path", $data);
-		$serializer->process($this, "routes", $data);
-		$serializer->process($this, "dest_path", $data);
-		$serializer->process($this, "src_path", $data);
-		$serializer->process($this, "required_modules", $data);
-		$serializer->process($this, "submodules", $data);
 	}
 	
 	
@@ -152,7 +158,7 @@ class Module extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 		if (!$source_path) return null;
 		$source_path_sz = \Runtime\rs::strlen($source_path);
 		if (\Runtime\rs::substr($file_path, 0, $source_path_sz) != $source_path) return null;
-		return \Runtime\rs::addFirstSlash(\Runtime\rs::substr($file_path, $source_path_sz));
+		return \Runtime\rs::addFirstSlash(\Runtime\rs::removeFirstSlash(\Runtime\rs::substr($file_path, $source_path_sz)));
 	}
 	
 	
@@ -167,7 +173,7 @@ class Module extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	 */
 	function checkAllow($file_name)
 	{
-		if (!$this->allow) return false;
+		if (!$this->allow) return true;
 		$success = false;
 		for ($i = 0; $i < $this->allow->count(); $i++)
 		{

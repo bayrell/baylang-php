@@ -327,29 +327,40 @@ class Style
 	}
 	static function getMethodInfoByName($field_name)
 	{
-		if ($field_nane == "test1") return new \Runtime\Vector(
+		if ($field_name == "test1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test2") return new \Runtime\Vector(
+		);
+		if ($field_name == "test2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test3") return new \Runtime\Vector(
+		);
+		if ($field_name == "test3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test4") return new \Runtime\Vector(
+		);
+		if ($field_name == "test4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test5") return new \Runtime\Vector(
+		);
+		if ($field_name == "test5") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test6") return new \Runtime\Vector(
+		);
+		if ($field_name == "test6") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test7") return new \Runtime\Vector(
+		);
+		if ($field_name == "test7") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test8") return new \Runtime\Vector(
+		);
+		if ($field_name == "test8") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test9") return new \Runtime\Vector(
+		);
+		if ($field_name == "test9") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test10") return new \Runtime\Vector(
+		);
+		if ($field_name == "test10") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test11") return new \Runtime\Vector(
+		);
+		if ($field_name == "test11") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "test12") return new \Runtime\Vector(
+		);
+		if ($field_name == "test12") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
 		);
 		return null;

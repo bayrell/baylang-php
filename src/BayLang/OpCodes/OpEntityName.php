@@ -19,6 +19,8 @@
 namespace BayLang\OpCodes;
 
 use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpIdentifier;
 
@@ -30,19 +32,21 @@ class OpEntityName extends \BayLang\OpCodes\BaseOpCode
 	
 	
 	/**
-	 * Returns name
+	 * Serialize object
 	 */
-	function getName(){ return \Runtime\rs::join(".", $this->items->map(function ($item){ return $item->value; })); }
+	static function serialize($serializer)
+	{
+		parent::serialize($serializer);
+		$serializer->addType("items", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpIdentifier",
+		]))));
+	}
 	
 	
 	/**
-	 * Serialize object
+	 * Returns name
 	 */
-	function serialize($serializer, $data)
-	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "items", $data);
-	}
+	function getName(){ return \Runtime\rs::join(".", $this->items->map(function ($item){ return $item->value; })); }
 	
 	
 	/* ========= Class init functions ========= */

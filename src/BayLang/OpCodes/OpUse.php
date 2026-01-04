@@ -18,7 +18,8 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
 
 
@@ -33,12 +34,12 @@ class OpUse extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "alias", $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "is_component", $data);
+		parent::serialize($rules);
+		$rules->addType("alias", new \Runtime\Serializer\StringType());
+		$rules->addType("name", new \Runtime\Serializer\StringType());
+		$rules->addType("is_component", new \Runtime\Serializer\StringType());
 	}
 	
 	

@@ -18,8 +18,10 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpCurry extends \BayLang\OpCodes\BaseOpCode
@@ -32,11 +34,11 @@ class OpCurry extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "args", $data);
-		$serializer->process($this, "obj", $data);
+		parent::serialize($rules);
+		$rules->addType("args", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("obj", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
 	}
 	
 	

@@ -18,8 +18,10 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpTypeIdentifier;
 
 
@@ -33,11 +35,11 @@ class OpNew extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "args", $data);
-		$serializer->process($this, "pattern", $data);
+		parent::serialize($rules);
+		$rules->addType("args", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
+		$rules->addType("pattern", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.OpCodes.OpTypeIdentifier"])));
 	}
 	
 	

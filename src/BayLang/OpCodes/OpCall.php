@@ -18,8 +18,11 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpCall extends \BayLang\OpCodes\BaseOpCode
@@ -34,14 +37,13 @@ class OpCall extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "args", $data);
-		$serializer->process($this, "is_await", $data);
-		$serializer->process($this, "is_context", $data);
-		$serializer->process($this, "is_html", $data);
-		$serializer->process($this, "item", $data);
+		parent::serialize($rules);
+		$rules->addType("args", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
+		$rules->addType("is_await", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_html", new \Runtime\Serializer\BooleanType());
+		$rules->addType("item", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

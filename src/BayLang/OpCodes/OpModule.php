@@ -18,10 +18,14 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\lib;
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\MapType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use Runtime\Exceptions\RuntimeException;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpDeclareClass;
 use BayLang\OpCodes\OpNamespace;
 use BayLang\OpCodes\OpUse;
@@ -29,6 +33,7 @@ use BayLang\OpCodes\OpUse;
 
 class OpModule extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $uses;
 	var $items;
 	var $is_component;
@@ -37,12 +42,12 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "is_component", $data);
-		$serializer->process($this, "items", $data);
-		$serializer->process($this, "uses", $data);
+		parent::serialize($rules);
+		$rules->addType("is_component", new \Runtime\Serializer\BooleanType());
+		$rules->addType("items", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
+		$rules->addType("uses", new \Runtime\Serializer\MapType(new \Runtime\Serializer\StringType()));
 	}
 	
 	
@@ -56,7 +61,7 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 			$this->uses->set($alias_name, $class_name);
 		}
 		/* Add op_code */
-		$pos = $this->items->find(\Runtime\lib::isInstance("BayLang.OpCodes.OpNamespace"));
+		$pos = $this->items->find(lib::isInstance("BayLang.OpCodes.OpNamespace"));
 		$op_code = new \BayLang\OpCodes\OpUse(new \Runtime\Map([
 			"alias" => $alias_name,
 			"name" => $class_name,
@@ -106,7 +111,7 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Find class
 	 */
-	function findClass(){ return $this->items ? $this->items->findItem(\Runtime\lib::isInstance("BayLang.OpCodes.OpDeclareClass")) : null; }
+	function findClass(){ return $this->items ? $this->items->findItem(lib::isInstance("BayLang.OpCodes.OpDeclareClass")) : null; }
 	
 	
 	
@@ -128,6 +133,7 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_module";
 		$this->uses = null;
 		$this->items = null;
 		$this->is_component = false;

@@ -605,7 +605,7 @@ class TranslatorES6Expression extends \Runtime\BaseObject
 		{
 			$class_name = $op_code->value2;
 			$interface_name = $this->translator->getFullName($class_name->entity_name->getName());
-			$result->push($this->translator->useModule("rtl") . ".isImplements(" . $result1 . ", " . $this->translator->toString($interface_name) . ")");
+			$result->push($this->translator->useModule("rtl") . ".isImplements(" . \Runtime\rs::join("", $result1) . ", " . $this->translator->toString($interface_name) . ")");
 		}
 		else
 		{

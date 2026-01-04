@@ -18,18 +18,34 @@
  */
 namespace BayLang\OpCodes;
 
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
+
 
 class OpHtmlCSSAttribute extends \BayLang\OpCodes\BaseOpCode
 {
+	var $op;
 	var $key;
 	var $value;
+	
+	
+	/**
+	 * Serialize object
+	 */
+	static function serialize($rules)
+	{
+		parent::serialize($rules);
+		$rules->addType("key", new \Runtime\Serializer\StringType());
+		$rules->addType("value", new \Runtime\Serializer\StringType());
+	}
 	
 	
 	/* ========= Class init functions ========= */
 	function _init()
 	{
 		parent::_init();
+		$this->op = "op_html_css_attr";
 		$this->key = "";
 		$this->value = "";
 	}

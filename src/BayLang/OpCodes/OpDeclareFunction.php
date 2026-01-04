@@ -18,9 +18,13 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAnnotation;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpDeclareFunctionArg;
 use BayLang\OpCodes\OpFlags;
@@ -48,21 +52,31 @@ class OpDeclareFunction extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "annotations", $data);
-		$serializer->process($this, "args", $data);
-		$serializer->process($this, "comments", $data);
-		$serializer->process($this, "expression", $data);
-		$serializer->process($this, "flags", $data);
-		$serializer->process($this, "is_context", $data);
-		$serializer->process($this, "is_html", $data);
-		$serializer->process($this, "is_html_default_args", $data);
-		$serializer->process($this, "items", $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "result_type", $data);
-		$serializer->process($this, "vars", $data);
+		parent::serialize($rules);
+		$rules->addType("annotations", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpAnnotation",
+		]))));
+		$rules->addType("args", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpItems",
+			"item" => "BayLang.OpCodes.OpDeclareFunctionArg",
+		])));
+		$rules->addType("comments", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpComment",
+		]))));
+		$rules->addType("flags", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpFlags",
+		])));
+		$rules->addType("is_context", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_html", new \Runtime\Serializer\BooleanType());
+		$rules->addType("is_html_default_args", new \Runtime\Serializer\BooleanType());
+		$rules->addType("name", new \Runtime\Serializer\StringType());
+		$rules->addType("content", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("pattern", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
+		])));
+		$rules->addType("vars", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\StringType()));
 	}
 	
 	

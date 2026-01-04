@@ -19,7 +19,9 @@
 namespace BayLang\OpCodes;
 
 use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpFor extends \BayLang\OpCodes\BaseOpCode
@@ -34,13 +36,13 @@ class OpFor extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "expr1", $data);
-		$serializer->process($this, "expr2", $data);
-		$serializer->process($this, "expr3", $data);
-		$serializer->process($this, "content", $data);
+		parent::serialize($rules);
+		$rules->addType("expr1", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("expr2", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("expr3", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("content", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	

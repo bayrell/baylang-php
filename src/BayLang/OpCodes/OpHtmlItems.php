@@ -18,8 +18,7 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\lib;
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpHtmlTag;
 use BayLang\OpCodes\OpItems;
@@ -28,6 +27,16 @@ use BayLang\OpCodes\OpItems;
 class OpHtmlItems extends \BayLang\OpCodes\OpItems
 {
 	var $op;
+	
+	
+	/**
+	 * Serialize object
+	 */
+	static function serialize($rules)
+	{
+		$rules->params->set("item", "BayLang.OpCodes.OpHtmlTag");
+		parent::serialize($rules);
+	}
 	
 	
 	/* ========= Class init functions ========= */

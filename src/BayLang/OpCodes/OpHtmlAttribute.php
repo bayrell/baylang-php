@@ -19,26 +19,30 @@
 namespace BayLang\OpCodes;
 
 use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpHtmlAttribute extends \BayLang\OpCodes\BaseOpCode
 {
 	var $op;
 	var $key;
-	var $expression;
 	var $is_spread;
+	var $expression;
 	
 	
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "is_spread", $data);
-		$serializer->process($this, "key", $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("is_spread", new \Runtime\Serializer\BooleanType());
+		$rules->addType("key", new \Runtime\Serializer\StringType());
+		$rules->addType("expression", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	
@@ -48,8 +52,8 @@ class OpHtmlAttribute extends \BayLang\OpCodes\BaseOpCode
 		parent::_init();
 		$this->op = "op_html_attr";
 		$this->key = "";
-		$this->expression = null;
 		$this->is_spread = false;
+		$this->expression = null;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpHtmlAttribute"; }
 	static function getMethodsList(){ return null; }

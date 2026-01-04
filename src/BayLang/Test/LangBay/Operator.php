@@ -509,55 +509,79 @@ class Operator
 	}
 	static function getMethodInfoByName($field_name)
 	{
-		if ($field_nane == "testAssign1") return new \Runtime\Vector(
+		if ($field_name == "testAssign1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign4") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign5") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign5") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign6") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign6") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign7") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign7") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testBreak") return new \Runtime\Vector(
+		);
+		if ($field_name == "testBreak") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testContinue") return new \Runtime\Vector(
+		);
+		if ($field_name == "testContinue") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testReturn1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testReturn1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testReturn2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testReturn2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testReturn3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testReturn3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testReturn4") return new \Runtime\Vector(
+		);
+		if ($field_name == "testReturn4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testInc1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testInc1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testInc2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testInc2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testDec1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testDec1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testDec2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testDec2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testFor1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testFor1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testThrow1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testThrow1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testTry1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testTry1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testWhile1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testWhile1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testComment1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testComment1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
 		);
 		return null;

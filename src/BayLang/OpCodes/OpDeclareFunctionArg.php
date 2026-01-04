@@ -18,27 +18,29 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpDeclareFunctionArg extends \BayLang\OpCodes\BaseOpCode
 {
 	var $op;
-	var $pattern;
 	var $name;
+	var $pattern;
 	var $expression;
 	
 	
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "expression", $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "pattern", $data);
+		parent::serialize($rules);
+		$rules->addType("name", new \Runtime\Serializer\StringType());
+		$rules->addType("expression", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("pattern", new \BayLang\OpCodes\OpCodeType());
 	}
 	
 	
@@ -47,8 +49,8 @@ class OpDeclareFunctionArg extends \BayLang\OpCodes\BaseOpCode
 	{
 		parent::_init();
 		$this->op = "op_function_arg";
-		$this->pattern = null;
 		$this->name = "";
+		$this->pattern = null;
 		$this->expression = null;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpDeclareFunctionArg"; }

@@ -417,21 +417,28 @@ class Operator
 	}
 	static function getMethodInfoByName($field_name)
 	{
-		if ($field_nane == "testAssign2") return new \Runtime\Vector(
+		if ($field_name == "testAssign2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testAssign4") return new \Runtime\Vector(
+		);
+		if ($field_name == "testAssign4") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testFor1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testFor1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf2") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf2") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testIf3") return new \Runtime\Vector(
+		);
+		if ($field_name == "testIf3") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
-		);if ($field_nane == "testWhile1") return new \Runtime\Vector(
+		);
+		if ($field_name == "testWhile1") return new \Runtime\Vector(
 			new \Runtime\Unit\Test(new \Runtime\Map())
 		);
 		return null;

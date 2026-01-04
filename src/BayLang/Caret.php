@@ -22,6 +22,8 @@ use Runtime\BaseObject;
 use Runtime\Reference;
 use Runtime\SerializeInterface;
 use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\IntegerType;
 use BayLang\BaseOpCode;
 use BayLang\Exceptions\ParserError;
 use BayLang\Exceptions\ParserExpected;
@@ -70,6 +72,24 @@ class Caret extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	
 	
 	/**
+	 * Serialize object
+	 */
+	static function serialize($serializer)
+	{
+		parent::serialize($serializer);
+		$serializer->addType("pos", new \Runtime\Serializer\IntegerType());
+		$serializer->addType("x", new \Runtime\Serializer\IntegerType());
+		$serializer->addType("y", new \Runtime\Serializer\IntegerType());
+	}
+	
+	
+	/**
+	 * Assign rules
+	 */
+	function assignRules($rules){}
+	
+	
+	/**
 	 * Constructor
 	 */
 	function __construct($items = null)
@@ -113,17 +133,6 @@ class Caret extends \Runtime\BaseObject implements \Runtime\SerializeInterface
 	 * Copy caret
 	 */
 	function copy($items = null){ return $this->clone($items); }
-	
-	
-	/**
-	 * Serialize object
-	 */
-	function serialize($serializer, $data)
-	{
-		$serializer->process($this, "pos", $data);
-		$serializer->process($this, "x", $data);
-		$serializer->process($this, "y", $data);
-	}
 	
 	
 	/**

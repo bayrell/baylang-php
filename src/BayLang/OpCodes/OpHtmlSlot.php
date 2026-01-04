@@ -18,7 +18,7 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpDeclareFunction;
 
@@ -32,9 +32,9 @@ class OpHtmlSlot extends \BayLang\OpCodes\OpDeclareFunction
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
+		parent::serialize($rules);
 	}
 	
 	

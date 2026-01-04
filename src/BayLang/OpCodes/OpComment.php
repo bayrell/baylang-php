@@ -18,7 +18,8 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\OpCodes\BaseOpCode;
 
 
@@ -31,10 +32,10 @@ class OpComment extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "value", $data);
+		parent::serialize($rules);
+		$rules->addType("value", new \Runtime\Serializer\StringType());
 	}
 	
 	

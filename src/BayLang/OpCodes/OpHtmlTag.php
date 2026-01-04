@@ -18,8 +18,12 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\BooleanType;
+use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
+use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpHtmlAttribute;
 use BayLang\OpCodes\OpHtmlItems;
 
@@ -31,21 +35,24 @@ class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
 	var $is_component;
 	var $op_code_name;
 	var $attrs;
-	var $spreads;
 	var $content;
 	
 	
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "attrs", $data);
-		$serializer->process($this, "content", $data);
-		$serializer->process($this, "op_code_name", $data);
-		$serializer->process($this, "spreads", $data);
-		$serializer->process($this, "tag_name", $data);
+		parent::serialize($rules);
+		$rules->addType("attrs", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpHtmlAttribute",
+		]))));
+		$rules->addType("content", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpHtmlItems",
+		])));
+		$rules->addType("is_component", new \Runtime\Serializer\BooleanType());
+		$rules->addType("op_code_name", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("tag_name", new \Runtime\Serializer\StringType());
 	}
 	
 	
@@ -58,7 +65,6 @@ class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
 		$this->is_component = false;
 		$this->op_code_name = null;
 		$this->attrs = null;
-		$this->spreads = null;
 		$this->content = null;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpHtmlTag"; }

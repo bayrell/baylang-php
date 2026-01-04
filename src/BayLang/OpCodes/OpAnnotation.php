@@ -18,8 +18,9 @@
  */
 namespace BayLang\OpCodes;
 
-use Runtime\Serializer;
+use Runtime\Serializer\ObjectType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpDict;
 
 
@@ -33,11 +34,13 @@ class OpAnnotation extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Serialize object
 	 */
-	function serialize($serializer, $data)
+	static function serialize($rules)
 	{
-		parent::serialize($serializer, $data);
-		$serializer->process($this, "name", $data);
-		$serializer->process($this, "params", $data);
+		parent::serialize($rules);
+		$rules->addType("name", new \BayLang\OpCodes\OpCodeType());
+		$rules->addType("params", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpDict",
+		])));
 	}
 	
 	
