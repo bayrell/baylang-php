@@ -32,7 +32,7 @@ class ModuleDescription
 	 * Returns module name
 	 * @return string
 	 */
-	static function getModuleVersion(){ return "1.0"; }
+	static function getModuleVersion(){ return "1.1"; }
 	
 	
 	/**
