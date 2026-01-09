@@ -241,6 +241,11 @@ class ParserBayHtml extends \Runtime\BaseObject
 				$is_spread = true;
 				$reader->matchToken("...");
 				$expression = $this->parser->parser_base->readDynamic($reader);
+				if ($expression instanceof \BayLang\OpCodes\OpIdentifier)
+				{
+					$this->parser->useVariable($expression);
+					$this->parser->findVariable($expression);
+				}
 			}
 			else
 			{
@@ -289,8 +294,8 @@ class ParserBayHtml extends \Runtime\BaseObject
 		while (!$caret->eof())
 		{
 			$ch = $caret->readChar();
-			if ($ch == ":" || $ch == ";" || $ch == "}") return false;
-			if ($ch == "{" || $ch == "(" || $ch == "&" || $ch == ".") return true;
+			if ($ch == ";" || $ch == "}") return false;
+			if ($ch == "&" || $ch == "{") return true;
 		}
 		return false;
 	}
@@ -528,10 +533,22 @@ class ParserBayHtml extends \Runtime\BaseObject
 			$reader->matchToken("{");
 			$tag_name = $this->parser->parser_base->readDynamic($reader);
 			$reader->matchToken("}");
+			$this->parser->useVariable($tag_name);
 		}
 		else
 		{
 			$tag_name = $this->parser->parser_base->readIdentifier($reader);
+		}
+		/* Detect component */
+		$is_component = true;
+		if (!$is_variable) $is_component = static::isComponent($tag_name->value);
+		/* Save vars */
+		$vars = new \Runtime\Vector();
+		$vars_uses = $this->parser->vars_uses->copy();
+		if ($tag_name->value == "slot" || $is_component)
+		{
+			$this->parser->function_level += 1;
+			$this->parser->vars_uses = new \Runtime\Map();
 		}
 		$attrs = $this->readAttrs($reader, (!$is_variable && $tag_name->value == "slot") ? "template" : "expression");
 		$content = null;
@@ -553,6 +570,14 @@ class ParserBayHtml extends \Runtime\BaseObject
 		{
 			$reader->matchToken("/>");
 		}
+		/* Restore vars */
+		if ($tag_name->value == "slot" || $is_component)
+		{
+			$this->parser->parser_function->extendVariables($vars);
+			$this->parser->vars_uses = $this->parser->vars_uses->concat($vars_uses);
+			/* Dec level */
+			$this->parser->function_level -= 1;
+		}
 		if ($tag_name->value == "slot")
 		{
 			$name = "";
@@ -566,15 +591,15 @@ class ParserBayHtml extends \Runtime\BaseObject
 			return new \BayLang\OpCodes\OpHtmlSlot(new \Runtime\Map([
 				"args" => $args,
 				"name" => $name,
+				"vars" => $vars,
 				"content" => $content,
 				"caret_start" => $caret_start,
 				"caret_end" => $reader->caret(),
 			]));
 		}
-		$is_component = true;
-		if (!$is_variable) $is_component = static::isComponent($tag_name->value);
 		return new \BayLang\OpCodes\OpHtmlTag(new \Runtime\Map([
 			"attrs" => $attrs,
+			"vars" => $vars,
 			"content" => $content,
 			"is_component" => $is_component,
 			"tag_name" => $is_variable ? $tag_name : $tag_name->value,
@@ -608,12 +633,18 @@ class ParserBayHtml extends \Runtime\BaseObject
 		$reader->matchToken("(");
 		/* Read assing */
 		$expr1 = $this->parser->parser_operator->readAssign($reader);
-		$reader->matchToken(";");
+		$is_foreach = $reader->nextToken() == "in";
+		if ($is_foreach)
+		{
+			$reader->matchToken("in");
+		}
+		else $reader->matchToken(";");
 		/* Read expression */
 		$expr2 = $this->parser->parser_expression->readExpression($reader);
-		$reader->matchToken(";");
+		if (!$is_foreach) $reader->matchToken(";");
 		/* Read operator */
-		$expr3 = $this->parser->parser_operator->readInc($reader);
+		$expr3 = null;
+		if (!$is_foreach) $expr3 = $this->parser->parser_operator->readInc($reader);
 		$reader->matchToken(")");
 		/* Read content */
 		$content = $this->readHtml($reader, true, "}");

@@ -203,6 +203,7 @@ class TranslatorPHPHtml extends \Runtime\BaseObject
 				$op_code_item = new \BayLang\OpCodes\OpDeclareFunction(new \Runtime\Map([
 					"is_html" => true,
 					"content" => $op_code->content,
+					"vars" => $op_code->vars,
 				]));
 				$result->push($this->translator->newLine());
 				$result->push($this->translator->newLine());

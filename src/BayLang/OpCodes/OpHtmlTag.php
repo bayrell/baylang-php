@@ -26,6 +26,7 @@ use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpHtmlAttribute;
 use BayLang\OpCodes\OpHtmlItems;
+use BayLang\OpCodes\OpIdentifier;
 
 
 class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
@@ -35,6 +36,7 @@ class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
 	var $is_component;
 	var $op_code_name;
 	var $attrs;
+	var $vars;
 	var $content;
 	
 	
@@ -46,6 +48,9 @@ class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
 		parent::serialize($rules);
 		$rules->addType("attrs", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
 			"class_name" => "BayLang.OpCodes.OpHtmlAttribute",
+		]))));
+		$rules->addType("vars", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpIdentifier",
 		]))));
 		$rules->addType("content", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
 			"class_name" => "BayLang.OpCodes.OpHtmlItems",
@@ -65,6 +70,7 @@ class OpHtmlTag extends \BayLang\OpCodes\BaseOpCode
 		$this->is_component = false;
 		$this->op_code_name = null;
 		$this->attrs = null;
+		$this->vars = null;
 		$this->content = null;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpHtmlTag"; }

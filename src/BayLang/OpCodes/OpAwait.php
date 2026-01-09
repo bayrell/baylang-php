@@ -16,48 +16,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-namespace BayLang;
+namespace BayLang\OpCodes;
+
+use Runtime\Serializer\ObjectType;
+use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
-class ModuleDescription
+class OpAwait extends \BayLang\OpCodes\BaseOpCode
 {
-	/**
-	 * Returns module name
-	 * @return string
-	 */
-	static function getModuleName(){ return "BayLang"; }
+	var $item;
 	
 	
 	/**
-	 * Returns module name
-	 * @return string
+	 * Serialize object
 	 */
-	static function getModuleVersion(){ return "1.2"; }
-	
-	
-	/**
-	 * Returns required modules
-	 * @return Map<string>
-	 */
-	static function requiredModules()
+	static function serialize($rules)
 	{
-		return new \Runtime\Map([
-			"Runtime" => ">=0.11 <1.0",
-		]);
+		parent::serialize($rules);
+		$rules->addType("item", new \BayLang\OpCodes\OpCodeType());
 	}
-	
-	
-	/**
-	 * Returns enities
-	 */
-	static function entities(){ return null; }
 	
 	
 	/* ========= Class init functions ========= */
 	function _init()
 	{
+		parent::_init();
+		$this->item = null;
 	}
-	static function getClassName(){ return "BayLang.ModuleDescription"; }
+	static function getClassName(){ return "BayLang.OpCodes.OpAwait"; }
 	static function getMethodsList(){ return null; }
 	static function getMethodInfoByName($field_name){ return null; }
 }

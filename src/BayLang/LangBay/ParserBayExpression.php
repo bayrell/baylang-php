@@ -26,6 +26,7 @@ use BayLang\Exceptions\ParserExpected;
 use BayLang\LangBay\ParserBay;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAttr;
+use BayLang\OpCodes\OpAwait;
 use BayLang\OpCodes\OpCall;
 use BayLang\OpCodes\OpDeclareFunction;
 use BayLang\OpCodes\OpIdentifier;
@@ -69,10 +70,15 @@ class ParserBayExpression extends \Runtime\BaseObject
 			$reader->matchToken(")");
 			return $op_code;
 		}
+		else if ($reader->nextToken() == "await")
+		{
+			return $this->readAwait($reader);
+		}
 		/* Read op_code */
 		$op_code = $this->parser->parser_base->readDynamic($reader);
 		if ($op_code instanceof \BayLang\OpCodes\OpIdentifier && $this->parser->find_variable)
 		{
+			$this->parser->useVariable($op_code);
 			$this->parser->findVariable($op_code);
 		}
 		return $op_code;
@@ -362,19 +368,69 @@ class ParserBayExpression extends \Runtime\BaseObject
 	
 	
 	/**
+	 * Read await
+	 */
+	function readAwait($reader)
+	{
+		$caret_start = $reader->caret();
+		$reader->matchToken("await");
+		$op_code = $this->parser->parser_base->readDynamic($reader);
+		return new \BayLang\OpCodes\OpAwait(new \Runtime\Map([
+			"caret_start" => $caret_start,
+			"caret_end" => $reader->caret(),
+			"item" => $op_code,
+		]));
+	}
+	
+	
+	/**
+	 * Read method
+	 */
+	function readMethod($reader)
+	{
+		$caret_start = $reader->caret();
+		$reader->matchToken("method");
+		$op_code = $this->parser->parser_base->readDynamic($reader);
+		if (!($op_code instanceof \BayLang\OpCodes\OpAttr))
+		{
+			throw $reader->expected("Attribute");
+		}
+		if (!($op_code->next instanceof \BayLang\OpCodes\OpIdentifier))
+		{
+			throw $reader->expected("Identifier");
+		}
+		$value1 = $op_code->prev;
+		$value2 = $op_code->next->value;
+		return new \BayLang\OpCodes\OpMethod(new \Runtime\Map([
+			"caret_start" => $caret_start,
+			"caret_end" => $reader->caret(),
+			"value1" => $value1,
+			"value2" => $value2,
+		]));
+	}
+	
+	
+	/**
 	 * Read element
 	 */
 	function readElement($reader)
 	{
-		/* Read collection */
+		/* Read vector */
 		if ($reader->nextToken() == "[")
 		{
 			return $this->parser->parser_base->readCollection($reader);
 		}
-		/* Read collection */
-		if ($reader->nextToken() == "{")
+		else if ($reader->nextToken() == "{")
 		{
 			return $this->parser->parser_base->readDict($reader);
+		}
+		else if ($reader->nextToken() == "<")
+		{
+			return $this->parser->parser_html->readTemplate($reader);
+		}
+		else if ($reader->nextToken() == "method")
+		{
+			return $this->readMethod($reader);
 		}
 		/* Try to read function */
 		$op_code = $this->parser->parser_function->tryReadFunction($reader, false);

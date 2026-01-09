@@ -80,14 +80,8 @@ class ParserBayFunction extends \Runtime\BaseObject
 	{
 		$caret_start = $reader->start();
 		/* Read identifier */
-		$is_await = false;
 		if ($pattern == null)
 		{
-			if ($reader->nextToken() == "await")
-			{
-				$is_await = true;
-				$reader->matchToken("await");
-			}
 			$pattern = $this->parser->parser_base->readDynamic($reader, false);
 		}
 		/* Next token should be bracket */
@@ -103,7 +97,6 @@ class ParserBayFunction extends \Runtime\BaseObject
 		return new \BayLang\OpCodes\OpCall(new \Runtime\Map([
 			"args" => $args,
 			"item" => $pattern,
-			"is_await" => $is_await,
 			"caret_start" => $caret_start,
 			"caret_end" => $reader->caret(),
 		]));
@@ -175,6 +168,37 @@ class ParserBayFunction extends \Runtime\BaseObject
 	
 	
 	/**
+	 * Extend variables
+	 */
+	function extendVariables($vars)
+	{
+		$vars_hash = $vars->transition(function ($item)
+		{
+			return new \Runtime\Vector(
+				$item,
+				$item->value,
+			);
+		});
+		$keys = \Runtime\rtl::list($this->parser->vars_uses->keys());
+		for ($i = 0; $i < $keys->count(); $i++)
+		{
+			$var_name = $keys->get($i);
+			$variable = $this->parser->vars->get($var_name);
+			if (!($variable instanceof \Runtime\Map) || $variable->get("function_level") >= $this->parser->function_level)
+			{
+				continue;
+			}
+			$item = $this->parser->vars_uses->get($var_name);
+			if (!$vars_hash->has($var_name))
+			{
+				$vars_hash->set($var_name, $item);
+				$vars->push($item);
+			}
+		}
+	}
+	
+	
+	/**
 	 * Read function
 	 */
 	function readDeclareFunction($reader, $read_name = true)
@@ -194,6 +218,13 @@ class ParserBayFunction extends \Runtime\BaseObject
 			"caret_start" => $caret_start,
 			"caret_end" => $reader->caret(),
 		]));
+		/* Clear vars */
+		if ($this->parser->current_class != null && $this->parser->function_level == 0)
+		{
+			$this->parser->vars = new \Runtime\Map();
+		}
+		/* Add new level */
+		$this->parser->function_level += 1;
 		/* Read function name */
 		$name = "";
 		$content = null;
@@ -201,6 +232,9 @@ class ParserBayFunction extends \Runtime\BaseObject
 		if ($read_name) $name = $this->parser->parser_base->readIdentifier($reader)->value;
 		$args = $this->readDeclareFunctionArgs($reader);
 		$vars = $this->readDeclareFunctionUse($reader);
+		/* Save vars */
+		$vars_uses = $this->parser->vars_uses->copy();
+		$this->parser->vars_uses = new \Runtime\Map();
 		/* Read content */
 		if ($this->parser->current_class != null && $this->parser->current_class->kind == \BayLang\OpCodes\OpDeclareClass::KIND_INTERFACE)
 		{
@@ -220,6 +254,11 @@ class ParserBayFunction extends \Runtime\BaseObject
 			$reader->matchToken("=>");
 			$content = $this->parser->parser_expression->readExpression($reader);
 		}
+		/* Restore vars */
+		$this->extendVariables($vars);
+		$this->parser->vars_uses = $this->parser->vars_uses->concat($vars_uses);
+		/* Dec level */
+		$this->parser->function_level -= 1;
 		return new \BayLang\OpCodes\OpDeclareFunction(new \Runtime\Map([
 			"args" => $args,
 			"flags" => $flags,

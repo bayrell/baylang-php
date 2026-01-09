@@ -76,7 +76,9 @@ class OpDeclareFunction extends \BayLang\OpCodes\BaseOpCode
 		$rules->addType("pattern", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
 			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
 		])));
-		$rules->addType("vars", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\StringType()));
+		$rules->addType("vars", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "OpIdentifier",
+		]))));
 	}
 	
 	

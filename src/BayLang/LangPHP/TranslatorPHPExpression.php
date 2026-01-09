@@ -24,6 +24,7 @@ use BayLang\SaveOpCode;
 use BayLang\LangPHP\TranslatorPHP;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAttr;
+use BayLang\OpCodes\OpAwait;
 use BayLang\OpCodes\OpCall;
 use BayLang\OpCodes\OpClassOf;
 use BayLang\OpCodes\OpCollection;
@@ -32,6 +33,7 @@ use BayLang\OpCodes\OpDict;
 use BayLang\OpCodes\OpDictPair;
 use BayLang\OpCodes\OpIdentifier;
 use BayLang\OpCodes\OpMath;
+use BayLang\OpCodes\OpMethod;
 use BayLang\OpCodes\OpNew;
 use BayLang\OpCodes\OpNumber;
 use BayLang\OpCodes\OpPreprocessorIfCode;
@@ -673,15 +675,44 @@ class TranslatorPHPExpression extends \Runtime\BaseObject
 	
 	
 	/**
+	 * Op await
+	 */
+	function OpAwait($op_code, $result)
+	{
+		if ($op_code->item instanceof \BayLang\OpCodes\OpCall)
+		{
+			$this->translateItem($op_code->item, $result);
+		}
+	}
+	
+	
+	/**
+	 * Op method
+	 */
+	function OpMethod($op_code, $result)
+	{
+		$result->push("new \\Runtime\\Method(");
+		$this->translateItem($op_code->value1, $result);
+		$result->push(", ");
+		$result->push($this->translator->toString($op_code->value2));
+		$result->push(")");
+	}
+	
+	
+	/**
 	 * Translate item
 	 */
 	function translateItem($op_code, $result)
 	{
-		if ($op_code instanceof \BayLang\OpCodes\OpNumber)
+		if ($op_code instanceof \BayLang\OpCodes\OpAwait)
+		{
+			$this->OpAwait($op_code, $result);
+		}
+		else if ($op_code instanceof \BayLang\OpCodes\OpNumber)
 		{
 			$this->OpNumber($op_code, $result);
 		}
-		if ($op_code instanceof \BayLang\OpCodes\OpString)
+		else if ($op_code instanceof \BayLang\OpCodes\OpString)
 		{
 			$this->OpString($op_code, $result);
 		}
@@ -692,6 +723,10 @@ class TranslatorPHPExpression extends \Runtime\BaseObject
 		else if ($op_code instanceof \BayLang\OpCodes\OpAttr)
 		{
 			$this->OpAttr($op_code, $result);
+		}
+		else if ($op_code instanceof \BayLang\OpCodes\OpCall)
+		{
+			$this->OpCall($op_code, $result);
 		}
 		else if ($op_code instanceof \BayLang\OpCodes\OpClassOf)
 		{
@@ -709,9 +744,9 @@ class TranslatorPHPExpression extends \Runtime\BaseObject
 		{
 			$this->translator->program->OpDeclareFunction($op_code, $result);
 		}
-		else if ($op_code instanceof \BayLang\OpCodes\OpCall)
+		else if ($op_code instanceof \BayLang\OpCodes\OpMethod)
 		{
-			$this->OpCall($op_code, $result);
+			$this->OpMethod($op_code, $result);
 		}
 		else if ($op_code instanceof \BayLang\OpCodes\OpNew)
 		{

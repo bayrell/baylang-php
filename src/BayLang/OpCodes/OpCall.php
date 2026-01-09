@@ -30,7 +30,6 @@ class OpCall extends \BayLang\OpCodes\BaseOpCode
 	var $op;
 	var $item;
 	var $args;
-	var $is_await;
 	var $is_html;
 	
 	
@@ -41,7 +40,6 @@ class OpCall extends \BayLang\OpCodes\BaseOpCode
 	{
 		parent::serialize($rules);
 		$rules->addType("args", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
-		$rules->addType("is_await", new \Runtime\Serializer\BooleanType());
 		$rules->addType("is_html", new \Runtime\Serializer\BooleanType());
 		$rules->addType("item", new \BayLang\OpCodes\OpCodeType());
 	}
@@ -54,7 +52,6 @@ class OpCall extends \BayLang\OpCodes\BaseOpCode
 		$this->op = "op_call";
 		$this->item = null;
 		$this->args = null;
-		$this->is_await = false;
 		$this->is_html = false;
 	}
 	static function getClassName(){ return "BayLang.OpCodes.OpCall"; }

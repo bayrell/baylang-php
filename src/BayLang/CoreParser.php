@@ -39,8 +39,10 @@ class CoreParser extends \Runtime\BaseObject
 	var $content;
 	var $content_size;
 	var $tab_size;
+	var $function_level;
 	var $find_variable;
 	var $vars;
+	var $vars_uses;
 	var $uses;
 	var $current_namespace;
 	var $current_class;
@@ -68,7 +70,27 @@ class CoreParser extends \Runtime\BaseObject
 	function addVariable($op_code, $pattern)
 	{
 		$name = $op_code->value;
-		$this->vars->set($name, $pattern);
+		$this->vars->set($name, new \Runtime\Map([
+			"pattern" => $pattern,
+			"function_level" => $this->function_level,
+		]));
+	}
+	
+	
+	/**
+	 * Use variable
+	 */
+	function useVariable($op_code)
+	{
+		$variable = $this->vars->get($op_code->value);
+		if (!($variable instanceof \Runtime\Map) || $variable->get("function_level") >= $this->function_level)
+		{
+			return;
+		}
+		if (!$this->vars_uses->has($op_code->value))
+		{
+			$this->vars_uses->set($op_code->value, $op_code);
+		}
 	}
 	
 	
@@ -114,8 +136,10 @@ class CoreParser extends \Runtime\BaseObject
 		$this->content = "";
 		$this->content_size = 0;
 		$this->tab_size = 4;
+		$this->function_level = 0;
 		$this->find_variable = true;
 		$this->vars = new \Runtime\Map();
+		$this->vars_uses = new \Runtime\Map();
 		$this->uses = new \Runtime\Map();
 		$this->current_namespace = null;
 		$this->current_class = null;

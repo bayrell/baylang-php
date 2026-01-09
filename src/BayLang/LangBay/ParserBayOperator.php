@@ -220,12 +220,22 @@ class ParserBayOperator extends \Runtime\BaseObject
 		$reader->matchToken("(");
 		/* Read assing */
 		$expr1 = $this->readAssign($reader);
-		$reader->matchToken(";");
+		/* Read in */
+		$is_foreach = $reader->nextToken() == "in";
+		if ($is_foreach)
+		{
+			$reader->matchToken("in");
+		}
+		else $reader->matchToken(";");
 		/* Read expression */
 		$expr2 = $this->parser->parser_expression->readExpression($reader);
-		$reader->matchToken(";");
+		if (!$is_foreach) $reader->matchToken(";");
 		/* Read operator */
-		$expr3 = $this->readInc($reader);
+		$expr3 = null;
+		if (!$is_foreach)
+		{
+			$expr3 = $this->readInc($reader);
+		}
 		$reader->matchToken(")");
 		/* Read content */
 		$content = $this->readContent($reader);
@@ -344,6 +354,13 @@ class ParserBayOperator extends \Runtime\BaseObject
 				"caret_end" => $reader->caret(),
 			])));
 		}
+		$expression = null;
+		for ($i = $items->count() - 1; $i >= 0; $i--)
+		{
+			$item = $items->get($i);
+			if ($item->expression) $expression = $item->expression;
+			else $item->expression = $expression;
+		}
 		/* Returns op_code */
 		return new \BayLang\OpCodes\OpAssign(new \Runtime\Map([
 			"flags" => new \BayLang\OpCodes\OpFlags(),
@@ -393,6 +410,10 @@ class ParserBayOperator extends \Runtime\BaseObject
 		else if ($next_token == "#switch" || $next_token == "#ifcode" || $next_token == "#ifdef")
 		{
 			return $this->parser->parser_preprocessor->readPreprocessor($reader, \BayLang\OpCodes\OpPreprocessorIfDef::KIND_OPERATOR);
+		}
+		else if ($next_token == "await")
+		{
+			return $this->parser->parser_expression->readAwait($reader);
 		}
 		else if ($next_token == "break")
 		{

@@ -498,6 +498,7 @@ class ParserBayBase extends \Runtime\BaseObject
 		$item = $this->readItem($reader);
 		if ($reader->nextToken() == "." && $item instanceof \BayLang\OpCodes\OpIdentifier)
 		{
+			$this->parser->useVariable($item);
 			$this->parser->findVariable($item);
 		}
 		$operations = new \Runtime\Vector(".", "::", "[", "(");
