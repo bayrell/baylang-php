@@ -1,5 +1,15 @@
 # BayLang compiler for PHP
 
+BayLang Technology is an innovative technology that significantly speeds up the process of developing web applications, websites and CRM systems using constructor and set of plugins.
+
+BayLang is an innovative FullStack programming language that has the unique functionality of automatically converting program code into backend and frontend, without needs to develop separate code for the server and client parts.
+
+This eliminates the need to constantly switch between different programming languages ​​and significantly improves the speed of web application development.
+
+BayLang programming language has reactivity, which allows you to automatically change the page if the data model changes, and also allows you to render the page on the server side (SSR).
+
+BayLang allows you to maintain a single code base and, if necessary, change the technology platform on which the program will run.
+
 Setting up PHP project https://baylang.com/en/baylang/project_php
 
 ## BayLang compiler versions
