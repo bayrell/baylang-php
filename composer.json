@@ -3,7 +3,7 @@
     "description": "BayLang compiler for PHP",
     "type": "library",
     "license": "Apache-2.0",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "authors": [
         {
             "name": "Ildar Bikmamatov",
