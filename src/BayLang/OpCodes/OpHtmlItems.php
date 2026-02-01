@@ -29,16 +29,6 @@ class OpHtmlItems extends \BayLang\OpCodes\OpItems
 	var $op;
 	
 	
-	/**
-	 * Serialize object
-	 */
-	static function serialize($rules)
-	{
-		$rules->params->set("item", "BayLang.OpCodes.OpHtmlTag");
-		parent::serialize($rules);
-	}
-	
-	
 	/* ========= Class init functions ========= */
 	function _init()
 	{

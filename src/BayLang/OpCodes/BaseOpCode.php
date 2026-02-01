@@ -23,6 +23,7 @@ use Runtime\BaseStruct;
 use Runtime\SerializeInterface;
 use Runtime\Serializer;
 use Runtime\Serializer\ObjectType;
+use Runtime\Serializer\StringType;
 use BayLang\Caret;
 
 
@@ -39,6 +40,7 @@ class BaseOpCode extends \Runtime\BaseObject implements \Runtime\SerializeInterf
 	static function serialize($rules)
 	{
 		parent::serialize($rules);
+		$rules->addType("op", new \Runtime\Serializer\StringType());
 		$rules->addType("caret_start", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.Caret"])));
 		$rules->addType("caret_end", new \Runtime\Serializer\ObjectType(new \Runtime\Map(["class_name" => "BayLang.Caret"])));
 	}

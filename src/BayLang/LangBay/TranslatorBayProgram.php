@@ -149,7 +149,7 @@ class TranslatorBayProgram extends \Runtime\BaseObject
 	 */
 	function OpDeclareFunction($op_code, $result)
 	{
-		if (!($op_code->pattern instanceof \BayLang\OpCodes\OpTypeIdentifier)) return;
+		/*if (not (op_code.pattern instanceof OpTypeIdentifier)) return;*/
 		/* Comments */
 		if ($op_code->comments)
 		{
@@ -161,12 +161,13 @@ class TranslatorBayProgram extends \Runtime\BaseObject
 			}
 		}
 		/* Function flags */
-		$flags = new \Runtime\Vector("async", "static", "pure");
+		$flags = new \Runtime\Vector("async", "static", "pure", "computed");
 		$flags = $flags->filter(function ($flag_name) use (&$op_code){ return $op_code->flags ? $op_code->flags->isFlag($flag_name) : false; });
 		$result->push(\Runtime\rs::join(" ", $flags));
 		if ($flags->count() > 0) $result->push(" ");
 		/* Function result type */
-		$this->translator->expression->OpTypeIdentifier($op_code->pattern, $result);
+		if ($op_code->pattern) $this->translator->expression->OpTypeIdentifier($op_code->pattern, $result);
+		else $result->push("void");
 		/* Function name */
 		$result->push(" ");
 		$result->push($op_code->name);

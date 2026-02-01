@@ -27,14 +27,20 @@ use BayLang\OpCodes\OpCall;
 use BayLang\OpCodes\OpDeclareClass;
 use BayLang\OpCodes\OpDeclareFunction;
 use BayLang\OpCodes\OpDeclareFunctionArg;
+use BayLang\OpCodes\OpFor;
 use BayLang\OpCodes\OpHtmlAttribute;
 use BayLang\OpCodes\OpHtmlContent;
+use BayLang\OpCodes\OpHtmlCSS;
+use BayLang\OpCodes\OpHtmlCSSAttribute;
 use BayLang\OpCodes\OpHtmlItems;
 use BayLang\OpCodes\OpHtmlSlot;
 use BayLang\OpCodes\OpHtmlStyle;
 use BayLang\OpCodes\OpHtmlTag;
 use BayLang\OpCodes\OpHtmlValue;
 use BayLang\OpCodes\OpIdentifier;
+use BayLang\OpCodes\OpIf;
+use BayLang\OpCodes\OpIfElse;
+use BayLang\OpCodes\OpItems;
 use BayLang\OpCodes\OpNamespace;
 use BayLang\OpCodes\OpString;
 use BayLang\OpCodes\OpUse;
@@ -126,24 +132,26 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 			$result->push($op_code_attr->key);
 			$result->push("=");
 			/* Value */
-			if ($op_code_attr->value instanceof \BayLang\OpCodes\OpString)
+			if ($op_code_attr->expression instanceof \BayLang\OpCodes\OpString)
 			{
-				$this->translator->expression->translate($op_code_attr->value, $result);
+				$this->translator->expression->translate($op_code_attr->expression, $result);
 			}
-			else if ($op_code_attr->value instanceof \BayLang\OpCodes\OpDeclareFunction)
+			else if ($op_code_attr->expression instanceof \BayLang\OpCodes\OpDeclareFunction)
 			{
-				$result->push("{{");
-				$this->translator->levelInc();
-				$result->push($this->translator->newLine());
-				$this->translator->expression->translate($op_code_attr->value, $result);
-				$this->translator->levelDec();
-				$result->push($this->translator->newLine());
-				$result->push("}}");
+				$result->push("\"");
+				$op_code = $op_code_attr->expression;
+				for ($i = 0; $i < $op_code->content->count(); $i++)
+				{
+					$item = $op_code->content->get($i);
+					$this->translator->operator->translateItem($item, $result);
+					if ($i < $op_code->content->count() - 1) $result->push(";");
+				}
+				$result->push("\"");
 			}
 			else
 			{
 				$result->push("{{ ");
-				$this->translator->expression->translate($op_code_attr->value, $result);
+				$this->translator->expression->translate($op_code_attr->expression, $result);
 				$result->push(" }}");
 			}
 			if ($i < $attrs_count - 1 && !$is_multiline) $result->push(" ");
@@ -193,7 +201,7 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 		$this->OpHtmlAttrs($op_code->attrs, $args_content, $is_multiline_attrs);
 		$args = \Runtime\rs::join("", $args_content);
 		if ($args != "" && !$is_multiline_attrs) $args = " " . $args;
-		if ($op_code->items == null)
+		if ($op_code->content == null)
 		{
 			$result->push("<" . $op_code->tag_name . $args . " />");
 		}
@@ -203,7 +211,7 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 			$result->push("<" . $op_code->tag_name . $args . ">");
 			if ($is_multiline) $this->translator->levelInc();
 			/* Items */
-			$this->OpHtmlItems($op_code->items, $result, $is_multiline);
+			$this->OpHtmlItems($op_code->content, $result, $is_multiline);
 			/* End tag */
 			if ($is_multiline)
 			{
@@ -260,6 +268,52 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 	
 	
 	/**
+	 * OpFor
+	 */
+	function OpFor($op_code, $result)
+	{
+		$result->push("%for (");
+		$this->translateItem($op_code->expr1, $result);
+		$result->push("; ");
+		$this->translator->expression->translate($op_code->expr2, $result);
+		$result->push("; ");
+		$this->translateItem($op_code->expr3, $result);
+		$result->push(")");
+		$this->translateItems($op_code);
+	}
+	
+	
+	/**
+	 * OpIf
+	 */
+	function OpIf($op_code, $result)
+	{
+		$result->push("%if (");
+		$this->translator->expression->translate($op_code->condition, $result);
+		$result->push(")");
+		$this->translateItems($op_code->if_true, $result);
+		if ($op_code->if_else && $op_code->if_else->count() > 0)
+		{
+			for ($i = 0; $i < $op_code->if_else->count(); $i++)
+			{
+				$op_code_item = $op_code->if_else->get($i);
+				$result->push($this->translator->newLine());
+				$result->push("%else if (");
+				$this->translator->expression->translate($op_code_item->condition, $result);
+				$result->push(")");
+				$this->translateItems($op_code_item->content, $result);
+			}
+		}
+		if ($op_code->if_false)
+		{
+			$result->push($this->translator->newLine());
+			$result->push("%else");
+			$this->translateItems($op_code->if_false, $result);
+		}
+	}
+	
+	
+	/**
 	 * Translate html item
 	 */
 	function OpHtmlItem($op_code, $result)
@@ -301,6 +355,14 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 				$result->push(" }}");
 			}
 		}
+		else if ($op_code instanceof \BayLang\OpCodes\OpIf)
+		{
+			$this->OpIf($op_code, $result);
+		}
+		else if ($op_code instanceof \BayLang\OpCodes\OpFor)
+		{
+			$this->OpFor($op_code, $result);
+		}
 		else
 		{
 			$result->push("{{ ");
@@ -315,12 +377,27 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 	 */
 	function OpHtmlItems($op_code, $result, $is_multiline = true)
 	{
-		$items_count = $op_code->items->count();
+		$items_count = $op_code->count();
 		for ($i = 0; $i < $items_count; $i++)
 		{
 			if ($is_multiline) $result->push($this->translator->newLine());
-			$this->OpHtmlItem($op_code->items->get($i), $result);
+			$this->OpHtmlItem($op_code->get($i), $result);
 		}
+	}
+	
+	
+	/**
+	 * Translate items
+	 */
+	function translateItems($op_code, $result)
+	{
+		$result->push($this->translator->newLine());
+		$result->push("{");
+		$this->translator->levelInc();
+		$this->OpHtmlItems($op_code, $result);
+		$this->translator->levelDec();
+		$result->push($this->translator->newLine());
+		$result->push("}");
 	}
 	
 	
@@ -348,7 +425,7 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 		}
 		/* Items */
 		$this->translator->levelInc();
-		$this->OpHtmlItems($op_code->expression, $result);
+		$this->OpHtmlItems($op_code->content, $result);
 		$this->translator->levelDec();
 		/* End template */
 		$result->push($this->translator->newLine());
@@ -370,6 +447,42 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 	
 	
 	/**
+	 * Translate style item
+	 */
+	function translateStyleItem($op_code, $result)
+	{
+		if ($op_code instanceof \BayLang\OpCodes\OpHtmlCSS)
+		{
+			$result->push($this->translator->newLine());
+			$result->push($op_code->selector . "{");
+			$this->translator->levelInc();
+			$this->translateStyleItems($op_code->items, $result);
+			$this->translator->levelDec();
+			$result->push($this->translator->newLine());
+			$result->push("}");
+		}
+		else if ($op_code instanceof \BayLang\OpCodes\OpHtmlCSSAttribute)
+		{
+			$result->push($this->translator->newLine());
+			$result->push($op_code->key . ": " . $op_code->value . ";");
+		}
+	}
+	
+	
+	/**
+	 * Translate style items
+	 */
+	function translateStyleItems($op_code, $result)
+	{
+		for ($i = 0; $i < $op_code->count(); $i++)
+		{
+			$item = $op_code->get($i);
+			$this->translateStyleItem($item, $result);
+		}
+	}
+	
+	
+	/**
 	 * Translate style
 	 */
 	function translateStyle($op_code, $result)
@@ -382,10 +495,9 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 		{
 			$result->push("<style>");
 		}
-		$result->push($this->translator->newLine());
 		if ($op_code->content)
 		{
-			$result->push($op_code->content);
+			$this->translateStyleItems($op_code->content, $result);
 			$result->push($this->translator->newLine());
 		}
 		$result->push("</style>");
@@ -398,9 +510,11 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 	 */
 	function translateClassBody($op_code, $result)
 	{
-		if ($op_code->items->count() == 0) return;
+		if ($op_code->content->count() == 0) return;
+		/* Set current class */
+		$this->translator->current_class = $op_code;
 		/* Get styles */
-		$styles = $op_code->items->filter(function ($op_code){ return $op_code instanceof \BayLang\OpCodes\OpHtmlStyle; });
+		$styles = $op_code->content->items->filter(function ($op_code){ return $op_code instanceof \BayLang\OpCodes\OpHtmlStyle; });
 		/* Translate styles */
 		for ($i = 0; $i < $styles->count(); $i++)
 		{
@@ -409,7 +523,7 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 			$this->translateStyle($op_code_item, $result);
 		}
 		/* Get templates */
-		$templates = $op_code->items->filter(function ($op_code){ return $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && $op_code->is_html; });
+		$templates = $op_code->content->items->filter(function ($op_code){ return $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && $op_code->is_html; });
 		/* Translate template */
 		for ($i = 0; $i < $templates->count(); $i++)
 		{
@@ -418,24 +532,29 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 			$this->translateClassItem($op_code_item, $result);
 		}
 		/* Get scripts */
-		$scripts = $op_code->items->filter(function ($op_code)
+		$scripts = $op_code->content->items->filter(function ($op_code)
 		{
-			return $op_code instanceof \BayLang\OpCodes\OpAnnotation || $op_code instanceof \BayLang\OpCodes\OpAssign || $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && !$op_code->is_html && !$op_code->name == "components";
+			return $op_code instanceof \BayLang\OpCodes\OpAnnotation || $op_code instanceof \BayLang\OpCodes\OpAssign || $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && !$op_code->is_html;
 		});
 		/* Translate scripts */
 		if ($scripts->count() > 0)
 		{
 			$result->push($this->translator->newLine());
 			$result->push("<script>");
-			$result->push($this->translator->newLine());
-			$result->push($this->translator->newLine());
+			$prev_op_code = null;
 			for ($i = 0; $i < $scripts->count(); $i++)
 			{
 				$op_code_item = $scripts->get($i);
-				$this->translator->program->translateClassItem($op_code_item, $result);
+				if ($prev_op_code == null || !($prev_op_code instanceof \BayLang\OpCodes\OpAssign && $op_code_item instanceof \BayLang\OpCodes\OpAssign))
+				{
+					$result->push($this->translator->newLine());
+					$result->push($this->translator->newLine());
+				}
 				$result->push($this->translator->newLine());
+				$this->translator->program->translateClassItem($op_code_item, $result);
+				$prev_op_code = $op_code_item;
 			}
-			$result->push($this->translator->newLine());
+			$result->push($this->translator->newLine(2));
 			$result->push("</script>");
 			$result->push($this->translator->newLine());
 		}
@@ -447,14 +566,14 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 	 */
 	function translate($op_code, $result)
 	{
-		$space = $op_code->items->findItem(\Runtime\lib::isInstance("BayLang.OpCodes.OpNamespace"));
-		$component = $op_code->items->findItem(\Runtime\lib::isInstance("BayLang.OpCodes.OpDeclareClass"));
-		$uses = $op_code->items->filter(\Runtime\lib::isInstance("BayLang.OpCodes.OpUse"));
+		$space = $op_code->items->find(function ($item){ return $item instanceof \BayLang\OpCodes\OpNamespace; });
+		$component = $op_code->items->find(function ($item){ return $item instanceof \BayLang\OpCodes\OpDeclareClass; });
+		$uses = $op_code->items->filter(function ($item){ return $item instanceof \BayLang\OpCodes\OpUse; });
 		if (!$component) return;
 		/* Get component name */
 		$component_names = new \Runtime\Vector();
 		if ($space) $component_names->push($space->name);
-		$component_names->push($component->name);
+		$component_names->push($component->name->entity_name->getName());
 		$component_name = \Runtime\rs::join(".", $component_names);
 		$result->push("<class name=\"" . $component_name . "\">");
 		$result->push($this->translator->newLine());
@@ -471,7 +590,7 @@ class TranslatorBayHtml extends \Runtime\BaseObject
 		}
 		/* Declare class */
 		$this->translateClassBody($component, $result);
-		if ($component->items->count() > 0 || $uses->count() > 0)
+		if ($component->content->count() > 0 || $uses->count() > 0)
 		{
 			$result->push($this->translator->newLine());
 		}

@@ -27,6 +27,7 @@ use BayLang\OpCodes\OpCall;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpContinue;
 use BayLang\OpCodes\OpFor;
+use BayLang\OpCodes\OpHtmlItems;
 use BayLang\OpCodes\OpIf;
 use BayLang\OpCodes\OpIfElse;
 use BayLang\OpCodes\OpInc;
@@ -59,6 +60,7 @@ class TranslatorBayOperator extends \Runtime\BaseObject
 	 */
 	function OpAssign($op_code, $result)
 	{
+		if ($op_code->flags->isFlag("props")) $result->push("props ");
 		if ($op_code->pattern)
 		{
 			$this->translator->expression->OpTypeIdentifier($op_code->pattern, $result);
@@ -71,17 +73,11 @@ class TranslatorBayOperator extends \Runtime\BaseObject
 			{
 				$result->push(" ");
 			}
-			if ($op_code_value->op_code)
-			{
-				$this->translator->expression->translate($op_code_value->op_code, $result);
-			}
-			else
-			{
-				$this->translator->expression->OpIdentifier($op_code_value->value, $result);
-			}
+			$this->translator->expression->OpAttr($op_code_value->value, $result);
 			if ($op_code_value->expression)
 			{
-				$result->push(" = ");
+				$op = $op_code_value->op ? $op_code_value->op : "=";
+				$result->push(" " . $op . " ");
 				$this->translator->expression->translate($op_code_value->expression, $result);
 			}
 			if ($i < $values_count - 1) $result->push(",");

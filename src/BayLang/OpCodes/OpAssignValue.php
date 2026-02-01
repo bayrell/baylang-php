@@ -51,7 +51,7 @@ class OpAssignValue extends \BayLang\OpCodes\BaseOpCode
 	function _init()
 	{
 		parent::_init();
-		$this->op = "";
+		$this->op = "=";
 		$this->value = null;
 		$this->expression = null;
 	}

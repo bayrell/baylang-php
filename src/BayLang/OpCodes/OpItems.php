@@ -22,6 +22,7 @@ use Runtime\Serializer;
 use Runtime\Serializer\ObjectType;
 use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
+use BayLang\OpCodes\OpCodeType;
 
 
 class OpItems extends \BayLang\OpCodes\BaseOpCode
@@ -36,7 +37,7 @@ class OpItems extends \BayLang\OpCodes\BaseOpCode
 	static function serialize($rules)
 	{
 		parent::serialize($rules);
-		$rules->addType("items", new \Runtime\Serializer\VectorType($rules->params->get("item")));
+		$rules->addType("items", new \Runtime\Serializer\VectorType(new \BayLang\OpCodes\OpCodeType()));
 	}
 	
 	

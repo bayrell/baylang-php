@@ -25,6 +25,7 @@ use Runtime\Serializer\VectorType;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAnnotation;
 use BayLang\OpCodes\OpAssign;
+use BayLang\OpCodes\OpAssignValue;
 use BayLang\OpCodes\OpCodeType;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpDeclareFunction;
@@ -93,7 +94,9 @@ class OpDeclareClass extends \BayLang\OpCodes\BaseOpCode
 		$rules->addType("name", new \Runtime\Serializer\ObjectType(new \Runtime\Map([
 			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
 		])));
-		$rules->addType("template", new \Runtime\Serializer\VectorType());
+		$rules->addType("template", new \Runtime\Serializer\VectorType(new \Runtime\Serializer\ObjectType(new \Runtime\Map([
+			"class_name" => "BayLang.OpCodes.OpTypeIdentifier",
+		]))));
 	}
 	
 	
@@ -117,7 +120,24 @@ class OpDeclareClass extends \BayLang\OpCodes\BaseOpCode
 	 */
 	function findFunction($name)
 	{
-		return $this->content->items->find(function ($op_code) use (&$name){ return $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && $op_code->name == $name; });
+		return $this->content ? $this->content->items->find(function ($op_code) use (&$name){ return $op_code instanceof \BayLang\OpCodes\OpDeclareFunction && $op_code->name == $name; }) : null;
+	}
+	
+	
+	
+	/**
+	 * Find variable
+	 */
+	function findVariable($name)
+	{
+		for ($i = 0; $i < $this->content->count(); $i++)
+		{
+			$item = $this->content->get($i);
+			if (!($item instanceof \BayLang\OpCodes\OpAssign)) continue;
+			$value = $item->findVariable($name);
+			if ($value) return $value;
+		}
+		return null;
 	}
 	
 	

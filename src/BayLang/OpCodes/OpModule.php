@@ -111,7 +111,10 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 	/**
 	 * Find class
 	 */
-	function findClass(){ return $this->items ? $this->items->findItem(lib::isInstance("BayLang.OpCodes.OpDeclareClass")) : null; }
+	function findClass()
+	{
+		return $this->items ? $this->items->find(function ($item){ return $item instanceof \BayLang\OpCodes\OpDeclareClass; }) : null;
+	}
 	
 	
 	
@@ -120,7 +123,7 @@ class OpModule extends \BayLang\OpCodes\BaseOpCode
 	 */
 	function findClassByName($name)
 	{
-		return $this->items->findItem(function ($item) use (&$name)
+		return $this->items->find(function ($item) use (&$name)
 		{
 			if (!($item instanceof \BayLang\OpCodes\OpDeclareClass)) return false;
 			if ($item->name == $name) return false;

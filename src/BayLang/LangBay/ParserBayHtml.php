@@ -24,6 +24,7 @@ use BayLang\TokenReader;
 use BayLang\LangBay\ParserBay;
 use BayLang\OpCodes\BaseOpCode;
 use BayLang\OpCodes\OpAssign;
+use BayLang\OpCodes\OpCall;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpDeclareClass;
 use BayLang\OpCodes\OpDeclareFunction;
@@ -494,11 +495,12 @@ class ParserBayHtml extends \Runtime\BaseObject
 	/**
 	 * Read html render
 	 */
-	function reaHtmlRender($reader)
+	function readHtmlRender($reader)
 	{
 		$reader->matchToken("%render");
 		$expression = $this->parser->parser_expression->readExpression($reader);
 		$reader->matchToken(";");
+		if ($expression instanceof \BayLang\OpCodes\OpCall) $expression->is_html = true;
 		return $expression;
 	}
 	
@@ -728,7 +730,7 @@ class ParserBayHtml extends \Runtime\BaseObject
 		$next_token = $reader->nextToken();
 		if ($next_token == "<") return $this->readHtmlTag($reader);
 		else if ($next_token == "{{") return $this->readHtmlExpression($reader);
-		else if ($next_token == "%render") return $this->reaHtmlRender($reader);
+		else if ($next_token == "%render") return $this->readHtmlRender($reader);
 		else if ($next_token == "%set" || $next_token == "%var") return $this->readHtmlAssign($reader);
 		else if ($next_token == "%for") return $this->readHtmlFor($reader);
 		else if ($next_token == "%if") return $this->readHtmlIf($reader);
@@ -818,7 +820,21 @@ class ParserBayHtml extends \Runtime\BaseObject
 		$reader->matchToken("template");
 		$attrs = $this->readAttrs($reader, "template");
 		$reader->matchToken(">");
+		/* Add new level */
+		$this->parser->function_level += 1;
+		/* Save vars */
+		$vars_uses = $this->parser->vars_uses->copy();
+		$vars = new \Runtime\Vector();
+		/* Read html */
 		$content = $this->readHtml($reader);
+		/* Restore vars */
+		if ($this->parser->function_level > 1)
+		{
+			$this->parser->parser_function->extendVariables($vars);
+			$this->parser->vars_uses = $this->parser->vars_uses->concat($vars_uses);
+		}
+		/* Dec level */
+		$this->parser->function_level -= 1;
 		$reader->matchToken("</");
 		$reader->matchToken("template");
 		$reader->matchToken(">");
@@ -833,6 +849,7 @@ class ParserBayHtml extends \Runtime\BaseObject
 		return new \BayLang\OpCodes\OpDeclareFunction(new \Runtime\Map([
 			"name" => $name ? $name : "render",
 			"args" => $args ? $args : null,
+			"vars" => $vars,
 			"is_html" => true,
 			"content" => $content,
 			"caret_start" => $caret_start,
@@ -947,6 +964,7 @@ class ParserBayHtml extends \Runtime\BaseObject
 		])));
 		return new \BayLang\OpCodes\OpModule(new \Runtime\Map([
 			"items" => $items,
+			"is_component" => true,
 			"caret_start" => $caret_start,
 			"caret_end" => $reader->caret(),
 		]));

@@ -36,6 +36,7 @@ class OpFlags extends \BayLang\OpCodes\BaseOpCode
 	 */
 	static function serialize($serializer)
 	{
+		parent::serialize($serializer);
 		$serializer->addType("items", new \Runtime\Serializer\MapType(new \Runtime\Serializer\BooleanType()));
 	}
 	
@@ -46,7 +47,7 @@ class OpFlags extends \BayLang\OpCodes\BaseOpCode
 	function isFlag($name)
 	{
 		if (!\BayLang\OpCodes\OpFlags::hasFlag($name)) return false;
-		return $this->items->get($name);
+		return $this->items ? $this->items->get($name) : false;
 	}
 	
 	

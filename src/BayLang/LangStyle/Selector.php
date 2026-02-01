@@ -105,6 +105,7 @@ class Selector extends \Runtime\BaseObject
 					$prefix = \Runtime\rs::substr($selector_item, 0, $index);
 					$postfix = \Runtime\rs::substr($selector_item, $index + 1);
 					$css_hash = ".h-" . $this->css_hash;
+					$last_item = \Runtime\rs::trim($last_items->get($i));
 					if (\Runtime\rs::indexOf($last_item, $css_hash) >= 0)
 					{
 						$last_item = \Runtime\rs::replace($css_hash, "", $last_item);

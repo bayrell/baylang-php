@@ -26,6 +26,7 @@ use BayLang\OpCodes\OpAssignValue;
 use BayLang\OpCodes\OpComment;
 use BayLang\OpCodes\OpFlags;
 use BayLang\OpCodes\OpTypeIdentifier;
+use BayLang\OpCodes\OpIdentifier;
 
 
 class OpAssign extends \BayLang\OpCodes\BaseOpCode
@@ -58,6 +59,15 @@ class OpAssign extends \BayLang\OpCodes\BaseOpCode
 	 * Returns true if static
 	 */
 	function isStatic(){ return $this->flags && ($this->flags->isFlag("static") || $this->flags->isFlag("const")); }
+	
+	
+	/**
+	 * Find variable
+	 */
+	function findVariable($name)
+	{
+		return $this->items->find(function ($item) use (&$name){ return $item->value instanceof \BayLang\OpCodes\OpIdentifier && $item->value->value == $name; });
+	}
 	
 	
 	/* ========= Class init functions ========= */

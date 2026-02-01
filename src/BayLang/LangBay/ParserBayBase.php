@@ -488,13 +488,6 @@ class ParserBayBase extends \Runtime\BaseObject
 	function readDynamic($reader, $read_function = true)
 	{
 		$caret_start = $reader->start();
-		/* Read await */
-		$is_await = false;
-		if ($reader->nextToken() == "await")
-		{
-			$is_await = true;
-			$reader->matchToken("await");
-		}
 		$item = $this->readItem($reader);
 		if ($reader->nextToken() == "." && $item instanceof \BayLang\OpCodes\OpIdentifier)
 		{
@@ -537,7 +530,6 @@ class ParserBayBase extends \Runtime\BaseObject
 				if ($read_function)
 				{
 					$item = $this->parser->parser_function->readCallFunction($reader, $item);
-					$item->is_await = $is_await;
 					$item->caret_start = $caret_start;
 				}
 				else
